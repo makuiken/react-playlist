@@ -3,7 +3,12 @@ import React from 'react';
 const Playlist = () => {
     return (
         <div>
-            {/* Your playlist content goes here */}
+            <h2>Playlist</h2>
+            <ul>
+                <li>Track 1</li>
+                <li>Track 2</li>
+                <li>Track 3</li>
+            </ul>
         </div>
     );
 };

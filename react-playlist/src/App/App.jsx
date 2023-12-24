@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import SearchBar from '../SearchBar/SearchBar';
+import SearchResults from '../SearchResults/SearchResults';
+import Playlist from '../Playlist/Playlist';
+import Track from '../Track/Track';
+import Tracklist from '../TrackList/Tracklist'; 
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [searchResults, setSearchResults] = useState([]);
+  const [playlist, setPlaylist] = useState([]);
+  const [tracks, setTracks] = useState([]);
+
+  useEffect(() => {
+    document.addEventListener('musickitloaded', async function () {
+      try {
+        await MusicKit.configure({
+          developerToken: 'MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgfgUktzXUB4vkpuZS7qWCb2PXBr6QfN2XlhOyUCgZ0F6gCgYIKoZIzj0DAQehRANCAAToLwWr1U+GXmloqo2fASnQhYP1vxZQ2PC9XM2LlHQthIc9JNtWATw/TPKLO58qLQ0eXwpr50eA7I+zMQnYBEd/',
+          app: {
+            name: 'Listed',
+            build: '1.0.0',
+          },
+        });
+      } catch (err) {
+        throw new Error(err);
+      }
+    });
+  }, []);
+
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <SearchBar setSearchResults={setSearchResults} />
+      <SearchResults results={searchResults} />
+      <Track />
+      <Tracklist  tracks={tracks} />
+      <Playlist playlist={playlist}/>
+    </div>
   )
 }
 
-export default App
+export default App;
