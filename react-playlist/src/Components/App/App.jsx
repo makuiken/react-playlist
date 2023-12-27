@@ -11,25 +11,10 @@ function App() {
   const [playlist, setPlaylist] = useState([]);
   const [tracks, setTracks] = useState([]);
 
-  useEffect(() => {
-    document.addEventListener('musickitloaded', async function () {
-      try {
-        await MusicKit.configure({
-          developerToken: 'MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgfgUktzXUB4vkpuZS7qWCb2PXBr6QfN2XlhOyUCgZ0F6gCgYIKoZIzj0DAQehRANCAAToLwWr1U+GXmloqo2fASnQhYP1vxZQ2PC9XM2LlHQthIc9JNtWATw/TPKLO58qLQ0eXwpr50eA7I+zMQnYBEd/',
-          app: {
-            name: 'Listed',
-            build: '1.0.0',
-          },
-        });
-      } catch (err) {
-        throw new Error(err);
-      }
-    });
-  }, []);
-
-
   return (
     <div>
+      <button id="apple-music-authorize">Authorize</button>
+      <button id="apple-music-unauthorize">Unauthorize</button>
       <SearchBar setSearchResults={setSearchResults} />
       <SearchResults results={searchResults} />
       <Track />
