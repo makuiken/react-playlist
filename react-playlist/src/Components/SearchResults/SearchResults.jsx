@@ -1,7 +1,9 @@
-import React from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { fetchPlaylist } from '../../services/musicKitService';
 
 const SearchResults = ({ results }) => {
+
+
     return (
       <div>
         <h2>Search Results</h2>

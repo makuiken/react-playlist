@@ -10,36 +10,67 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
   const [playlist, setPlaylist] = useState([]);
   const [tracks, setTracks] = useState([]);
-  
+  const [isMusicKitReady, setIsMusicKitReady] = useState(false);
+  let musicKit; // Declare musicKit here
+
   useEffect(() => {
-    document.addEventListener('musickitloaded', function() {
-      // MusicKit global is now defined
+    if (window.MusicKit) {
+      console.log("Directly configuring MusicKit");
+  
       window.MusicKit.configure({
-        developerToken:"MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgPBCK+duaQZ5o5pgnR/xj8AtPYVlEQQmIRGSvTkVY1GqgCgYIKoZIzj0DAQehRANCAARyu3VG6/z8elguvgbyOg+6mV2FLPRQCiA8+DBFO+mKz7zapU1KolK7HqWjZA4AWyqS8Eh4Ev2N2rLSEFj1tcyz",
+        developerToken: import.meta.env.VITE_MUSICKIT_TOKEN,
         app: {
           name: 'Listed',
-          build: '1.0.0'
-        }
+          build: '1.0.0',
+        },
       });
-
-      // Now that MusicKit is configured, you can use it here
-      const musicKit = window.MusicKit.getInstance();
-      musicKit.authorize().then(function() {
-        // Authorization succeeded
+  
+      musicKit = window.MusicKit.getInstance();
+      musicKit.authorize().then(() => {
         console.log('Authorization succeeded');
-      }).catch(function(error) {
-        // Authorization failed
+        setIsMusicKitReady(true);
+      }).catch((error) => {
         console.error('Authorization failed', error);
       });
-    });
-  }, []); // Empty dependency array to run the effect only once
-
   
+    } else {
+      console.error("MusicKit library not found");
+    }
+  }, []);
+  
+  const handleAuthorize = () => {
+    const musicKit = window.MusicKit.getInstance();
+    musicKit.authorize().then(() => {
+      console.log('Authorization succeeded');
+      setIsMusicKitReady(true);
+    }).catch((error) => {
+      console.error('Authorization failed', error);
+    });
+  };
+
+  // Example function to use MusicKit
+  const getAlbums = () => {
+    if(isMusicKitReady) {
+      if (window.MusicKit && window.MusicKit.getInstance()) {
+        const musicKit = window.MusicKit.getInstance();
+        musicKit.api.library.albums().then(albums => {
+          console.log(albums);
+        }).catch(error => {
+          console.error('Error fetching albums', error);
+        });
+      } else {
+        console.log('MusicKit not initialized or user not authorized');
+      }
+    } else {
+      console.log('MusicKit not ready');
+    }
+
+  };
 
   return (
     <div>
-      <button id="apple-music-authorize">Authorize</button>
-      <button id="apple-music-unauthorize">Unauthorize</button>
+      <button onClick={getAlbums}>Get Albums</button>
+      <button onClick={handleAuthorize}>Authorize</button>
       <SearchBar setSearchResults={setSearchResults} />
       <SearchResults results={searchResults} />
       <Track />
