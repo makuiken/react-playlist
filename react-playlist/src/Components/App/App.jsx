@@ -11,7 +11,8 @@ function App() {
   const [playlist, setPlaylist] = useState([]);
   const [tracks, setTracks] = useState([]);
   const [isMusicKitReady, setIsMusicKitReady] = useState(false);
-  let musicKit; // Declare musicKit here
+  const [isLoading, setIsLoading] = useState(false);
+  let musicKit;
 
   useEffect(() => {
     if (window.MusicKit) {
@@ -48,31 +49,36 @@ function App() {
     });
   };
 
-  // Example function to use MusicKit
-  const getAlbums = () => {
-    if(isMusicKitReady) {
-      if (window.MusicKit && window.MusicKit.getInstance()) {
-        const musicKit = window.MusicKit.getInstance();
-        musicKit.api.library.albums().then(albums => {
-          console.log(albums);
-        }).catch(error => {
-          console.error('Error fetching albums', error);
+  const handleSearch = (searchTerm) => {
+    setIsLoading(true);
+    if (window.MusicKit && isMusicKitReady) {
+      const musicKit = window.MusicKit.getInstance();
+      musicKit.api.search(searchTerm, { limit: 25, types: 'songs' })
+        .then(results => {
+          // Process and display the search results
+          setSearchResults(results.songs.data); 
+          console.log(results); // Or update state with the results
+          setIsLoading(false);
+        })
+        .catch(error => {
+          console.error('Error during MusicKit search:', error);
+          setIsLoading(false);
         });
-      } else {
-        console.log('MusicKit not initialized or user not authorized');
-      }
-    } else {
-      console.log('MusicKit not ready');
     }
-
   };
 
   return (
     <div>
-      <button onClick={getAlbums}>Get Albums</button>
-      <button onClick={handleAuthorize}>Authorize</button>
-      <SearchBar setSearchResults={setSearchResults} />
-      <SearchResults results={searchResults} />
+      <button onClick={handleAuthorize}>Login to your Apple Music account</button>
+      <div>
+        <SearchBar onSearch={handleSearch} />
+        {isLoading ? (
+          <div>Loading...</div> // You can replace this with a spinner or any loading component
+        ) : (
+          <SearchResults results={searchResults} />
+        )}
+      </div>
+
       <Track />
       <Tracklist  tracks={tracks} />
       <Playlist playlist={playlist}/>
