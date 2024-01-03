@@ -3,8 +3,6 @@ import './App.css';
 import SearchBar from '../SearchBar/SearchBar';
 import SearchResults from '../SearchResults/SearchResults';
 import Playlist from '../Playlist/Playlist';
-import Track from '../Track/Track';
-import Tracklist from '../TrackList/Tracklist'; 
 
 function App() {
   const [searchResults, setSearchResults] = useState([]);
@@ -78,9 +76,6 @@ function App() {
           <SearchResults results={searchResults} />
         )}
       </div>
-
-      <Track />
-      <Tracklist  tracks={tracks} />
       <Playlist playlist={playlist}/>
     </div>
   )
